@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>setIdle() demo.</title>
+</head>
+<body>
+
+    <input type="text" />
+    <input type="button" value="test!!!!!" />
+    <br /><br />
+    <div id="panelActive" style="background-color: green; padding: 10px; font-size: 18px; text-align: center;">Idle</div>
+
+<script type="text/javascript" src="setidle.js"></script>
+<script type="text/javascript">
+
+    setIdle(function () {
+        var element = document.getElementById('panelActive');
+        element.innerHTML = 'Idle';
+        element.style.backgroundColor = 'green';
+    }, function () {
+        var element = document.getElementById('panelActive');
+        element.innerHTML = 'Active';
+        element.style.backgroundColor = 'red';
+    }, 1000);
+
+</script>
+</body>
+</html>

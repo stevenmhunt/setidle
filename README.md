@@ -4,8 +4,13 @@ Monitors your JS application for when the user is idle and triggers events.
     var idle = setIdle(() => doSomething('awesome'));
 
 ## Installation
+
+### NPM
     > npm install setidle
+### Bower
     > bower install setidle
+### The old-fashioned way
+    <script type="text/javascript" src="setidle.js"></script>
 
 ## Background
 
@@ -16,6 +21,7 @@ process anything. This can help to ensure that your complex interactions remain 
 only running code when you absolutely have the resources to do so, especially on mobile.
 
 ![](http://i.giphy.com/11xBk5MoWjrYoE.gif)
+<br />
 [[Giphy Link](http://gph.is/1nF4c0i)]
 
 ## Features
@@ -26,17 +32,19 @@ only running code when you absolutely have the resources to do so, especially on
 ## Usage
 
 ### Class constructor
-    // CommonJS/Node
+
+#### CommonJS/Node
     var SetIdle = require('setidle');
     var idle = new SetIdle(emitter);
     idle.start(() => doSomething('awesome'));
     
-    // RequireJS
+#### RequireJS
     require(['setidle'], function (SetIdle) {
-    var idle = new SetIdle(emitter);
-    idle.start(() => doSomething('awesome'));
+        var idle = new SetIdle(emitter);
+        idle.start(() => doSomething('awesome'));
+    });
     
-    // Browser
+#### Browser
     var element = document.getElementById('panelStuff');
     var idle = new SetIdle(new SetIdle.DOMEventEmitter(element));
     idle.start(() => doSomething('awesome'));
@@ -47,4 +55,4 @@ The `SetIdle` constructor expects a single parameter *emitter*, which is of the 
 
 ## Contributing
 
-Contributions and pull requests are welcome! If you see a future feature that you want, add it to our issue tracker. If you find a bug, definitely report back to us!
+Contributions and pull requests are welcome! If you see a feature that you want, add it to our issue tracker. If you find a bug, definitely report back to us. As always, PRs are welcome!

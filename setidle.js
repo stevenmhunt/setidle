@@ -1,5 +1,5 @@
 /*****************************
- * setIdle
+ * setidle
  * Written by Steven Hunt
  * MIT License
  *****************************/
@@ -14,12 +14,13 @@
         /**
          * How long to wait for event silence before declaring the application as idle.
          */
-        interval: 2000,
+        interval: 3000,
 
         /**
          * A list of events to use in order to determine when the system is in use.
          */
         events: [
+
             // The user is interacting with the page.
             'change',
             'click',
@@ -27,21 +28,27 @@
             'scroll',
             'touchstart',
             'touchend',
-            // watch for document resize, or the DOM getting rebuilt (I.E. React)
+
+            // watch for indications that the browser is having to re-paint the page.
             'resize',
-            'DOMSubtreeModified'
+            'DOMNodeInserted',
+            'DOMNodeRemoved'
         ]
     };
 
     /**
      * An event emitter wrapper for DOM events.
-     * This is helpful so that the actual code only cares about working with event emitters.
+     * This is helpful so that SetIdle only cares about working with event emitters in general.
      * @constructor
      */
-    function WindowEventEmitter (element) {
+    function DOMEventEmitter (element) {
 
         element = element || window;
 
+        /**
+         * Retrieves the HTML element being wrapped.
+         * @returns The HTML element being wrapped.
+         */
         this.getElement = function () { return element; };
     }
 
@@ -50,8 +57,10 @@
      * @param event {string} The event to register.
      * @param fn {function} The event listener to register.
      */
-    WindowEventEmitter.prototype.on = function (event, fn) {
-        this.getElement().addEventListener(event, fn, false);
+    DOMEventEmitter.prototype.on = function (event, fn) {
+
+        this.getElement()
+            .addEventListener(event, fn, false);
     };
 
     /**
@@ -59,29 +68,35 @@
      * @param event {string} The event to remove.
      * @param fn {function} The event listener to remove.
      */
-    WindowEventEmitter.prototype.removeListener =  function (event, fn) {
-        this.getElement().removeEventListener(event, fn);
+    DOMEventEmitter.prototype.off =  function (event, fn) {
+
+        this.getElement()
+            .removeEventListener(event, fn);
     };
 
     /**
      * Monitors and reports on whether the given event emitted is idle.
-     * @param emitter An event emitter.
+     * @param emitter An event emitter. Expects a NodeJS-style EventEmitter instance. For DOM events, use SetIdle.DOMEventEmitter.
      * @constructor
      */
     function SetIdle(emitter) {
-        this._isRunning = false;
-        this.getEvents = function () {  return emitter; };
+
+        /**
+         * Retrieves the emitter being monitored.
+         * @returns The emitter being monitored.
+         */
+        this.getEmitter = function () {  return emitter; };
     }
 
-    SetIdle.WindowEventEmitter = WindowEventEmitter;
+    SetIdle.DOMEventEmitter = DOMEventEmitter;
 
     /**
      * Starts the event monitoring if not started yet.
-     * @param config
-     * @param fnIdle
-     * @param fnActive
+     * @param fnIdle A callback for when the application is idle.
+     * @param fnActive A callback for when the application is active.
+     * @param [config] A configuration object.
      */
-    SetIdle.prototype.start = function (config, fnIdle, fnActive) {
+    SetIdle.prototype.start = function (fnIdle, fnActive, config) {
 
         // use the default configuration if none is provided.
         config = config || defaultConfig;
@@ -93,16 +108,17 @@
 
         /**
          * Handles the event by resetting the idle timer.
-         * @param e Event object.
          */
-        function handleEvent(e) {
+        function handleEvent() {
 
             // clear the previously running timeout.
             if (prevTimeout) {
                 clearTimeout(prevTimeout);
+                prevTimeout = null;
             }
+
+            // if there was no running timeout, then report that the application has become active.
             else if (fnActive && typeof fnActive === 'function') {
-                // if there was no running timeout, then report that the application has become active.
                 fnActive();
             }
 
@@ -115,34 +131,51 @@
             }, config.interval);
         }
 
+        var events = this.getEmitter(),
+            eventOn = (events.on || events.addListener);
+
+        if (!eventOn || typeof eventOn !== 'function') {
+            throw 'The provided event emitter does not implement on() or addListener().';
+        }
+
+        eventOn = eventOn.bind(events);
+
+        // register the handler for all events to be monitored.
         for (var i = 0; i < config.events.length; i++) {
-            this.getEvents().on(config.events[i], handleEvent);
+            eventOn(config.events[i], handleEvent);
         }
 
         this._eventHandlers.push(handleEvent);
-
-        this._isRunning = true;
-    };
-
-    SetIdle.prototype.stop = function () {
-
-        var i = 0, j = 0;
-
-        for (i = 0; i < this._config.events.length; i++) {
-            for (j = 0; j < this._eventHandlers.length; j++) {
-                this.getEvents().removeListener(this._config.events[i], this._eventHandlers[j]);
-            }
-        }
-
-        this._isRunning = false;
     };
 
     /**
-     *
-     * @param fnIdle
-     * @param [fnActive]
-     * @param [interval]
-     * @returns {SetIdle}
+     * Stops all event monitoring.
+     */
+    SetIdle.prototype.stop = function () {
+
+        var i, j,
+            events = this.getEmitter(),
+            eventOff = (events.off || events.removeListener);
+
+        if (!eventOff || typeof eventOff !== 'function') {
+            throw 'The provided event emitter does not implement off() or removeListener().';
+        }
+
+        eventOff = eventOff.bind(events);
+
+        for (i = 0; i < this._config.events.length; i++) {
+            for (j = 0; j < this._eventHandlers.length; j++) {
+                eventOff(this._config.events[i], this._eventHandlers[j]);
+            }
+        }
+    };
+
+    /**
+     * Monitors the DOM and reports when an application is either idle or active.
+     * @param fnIdle {function} A callback for when the application is idle.
+     * @param [fnActive] {function} A callback for when the application is active.
+     * @param [interval] {number} The number of milliseconds to wait until the application is considered idle. The default is 2,000 milliseconds.
+     * @returns {SetIdle} An instance of the SetIdle class which allows for stopping and starting the event monitoring.
      */
     function setIdle(fnIdle, fnActive, interval) {
 
@@ -153,19 +186,19 @@
 
         interval = interval || defaultConfig.interval;
 
-        var idle = new SetIdle(new SetIdle.WindowEventEmitter());
+        var idle = new SetIdle(new SetIdle.DOMEventEmitter());
 
-        idle.start({
+        idle.start(fnIdle, fnActive, {
             interval: interval,
             events: defaultConfig.events
-        }, fnIdle, fnActive);
+        });
 
         return idle;
     }
 
     /**
-     *
-     * @param idle
+     * Stops setIdle monitoring.
+     * @param idle An instance of the SetIdle class returned by setIdle().
      */
     function clearIdle(idle) {
         idle.stop();
@@ -175,16 +208,24 @@
     if(typeof define === "function" && define.amd) {
         define(["setidle"], SetIdle);
     }
+
     // check for CommonJS
     else if(typeof module === "object" && module.exports) {
         module.exports = SetIdle;
     }
-    // we're in an ordinary browser apparently.
-    else {
+
+    // check for browser.
+    else if (window) {
+
+        // set up simple functions.
         window.setIdle = setIdle;
         window.clearIdle = clearIdle;
 
         window.SetIdle = SetIdle;
+    }
+
+    else {
+        throw 'Error: No browser or module system detected!';
     }
 
 })(window);

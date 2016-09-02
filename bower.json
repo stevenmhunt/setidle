@@ -1,0 +1,23 @@
+{
+  "name": "setidle",
+  "homepage": "https://github.com/stevenmhunt/setidle",
+  "authors": [
+    "Steven Hunt <steven.mtw.hunt@gmail.com>"
+  ],
+  "description": "Monitors your JS application for when the user is idle and triggers events.",
+  "main": "setidle.js",
+  "keywords": [
+    "js",
+    "idle",
+    "active",
+    "timeout"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

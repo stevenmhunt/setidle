@@ -22,12 +22,12 @@ only running code when you absolutely have the resources to do so, especially on
 
 ![](http://i.giphy.com/11xBk5MoWjrYoE.gif)
 <br />
-[[Giphy Link](http://gph.is/1nF4c0i)]
+<small>[[Giphy](http://gph.is/1nF4c0i)]</small>
 
 ## Features
 - Simple no-nonsense browser implementation based on `window.setTimeout`.
-- Class constructor which wraps any `EventEmitter` using the [NodeJS EventEmitter class in the *events* API](https://nodejs.org/api/events.html#events_class_eventemitter).
-- Can be configured to work on a specific element or the entire window.
+- Class constructor which wraps event emitters with reasonable duck-typing support.
+- Can be configured to work on a specific HTML element or the entire window.
 
 ## Examples
 
@@ -51,7 +51,7 @@ only running code when you absolutely have the resources to do so, especially on
 
 ### SetIdle (emitter)
 - Constructs an idle monitor.
-- The `SetIdle` constructor expects a single parameter *emitter*, which has either an 'on()' or 'addListener()' method, and an 'off()' or 'removeListener()' method. 
+- The `SetIdle` constructor expects a single parameter *emitter*, which has either an `on()` or `addListener()` method, and an `off()` or `removeListener()` method. 
 - It is compatible with the [NodeJS EventEmitter class in the *events* API](https://nodejs.org/api/events.html#events_class_eventemitter).
 
 ### SetIdle.start (fnIdle, [fnActive], [config])
@@ -105,4 +105,4 @@ only running code when you absolutely have the resources to do so, especially on
 
 ## Contributing
 
-Contributions and pull requests are welcome! If you see a feature that you want, add it to our issue tracker. If you find a bug, definitely report back to us. As always, PRs are welcome!
+Contributions and pull requests are welcome! If you see a feature that you want, add it to our issue tracker. If you find a bug, definitely report back to us.

@@ -204,6 +204,10 @@
         idle.stop();
     }
 
+    // make the simple functions available to everyone.
+    SetIdle.setIdle = setIdle;
+    SetIdle.clearIdle = clearIdle;
+
     // check for RequireJS
     if(typeof define === "function" && define.amd) {
         define(["setidle"], SetIdle);

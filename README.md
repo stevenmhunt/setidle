@@ -27,7 +27,7 @@ only running code when you absolutely have the resources to do so, especially on
 ## Features
 - Simple no-nonsense browser implementation based on `window.setTimeout`.
 - Class constructor which wraps event emitters with reasonable duck-typing support.
-- Can be configured to work on a specific HTML element or the entire window.
+- Can be configured to work on a specific HTML element or the entire document.
 
 ## Examples
 
@@ -95,7 +95,7 @@ only running code when you absolutely have the resources to do so, especially on
 - The `fnIdle` callback will be triggered when the application is idle.
 - The `fnActive` callback will be triggered when the application is active again.
 - The interval defines how many milliseconds of inactivity constitutes "idleness". The default is 3000 milliseconds.
-- Note that the procedural version automatically passes `window` to the `DOMEventEmitter` constructor.
+- Note that the procedural version automatically passes `window.document` to the `DOMEventEmitter` constructor.
 - Returns an instance of the SetIdle object used to start monitoring.
 
 ### window.clearIdle (idle)

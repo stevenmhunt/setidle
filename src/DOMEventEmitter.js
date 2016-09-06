@@ -59,13 +59,13 @@ function registerObserver(observer, name, element) {
 /**
  * An event emitter wrapper for DOM events.
  * This is helpful so that SetIdle only cares about working with event emitters in general.
- * @param [element] The element to monitor for events. The default is the window object.
+ * @param [element] The element to monitor for events. The default is the document object.
  * @param [observers] A list of observers to register for supporting virtual DOM events.
  * @constructor
  */
 function DOMEventEmitter (element, observers) {
 
-    element = element || document;
+    element = element || window.document;
 
     /**
      * Retrieves the HTML element being wrapped.
@@ -96,7 +96,7 @@ DOMEventEmitter.observers = defaultDOMObservers;
 /**
  * Disconnects all running observers.
  */
-DOMEventEmitter.disconnect = function () {
+DOMEventEmitter.prototype.disconnect = function () {
 
     // iterate through the observers...
     for (var i = 0; i < this._observerNames.length; i++) {

@@ -1,6 +1,6 @@
 {
   "name": "setidle",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Callback for when the system is idle.",
   "main": "setidle.js",
   "scripts": {

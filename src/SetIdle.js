@@ -4,14 +4,14 @@
  * @param emitter An event emitter. Expects a NodeJS-style EventEmitter instance. For DOM events, use SetIdle.DOMEventEmitter.
  * @constructor
  */
-function SetIdle(emitter) {
+var SetIdle = function SetIdle(emitter) {
 
     /**
      * Retrieves the emitter being monitored.
      * @returns The emitter being monitored.
      */
     this.getEmitter = function () {  return emitter; };
-}
+};
 
 SetIdle.DOMEventEmitter = DOMEventEmitter;
 
@@ -132,3 +132,8 @@ function clearIdle(idle) {
 // make the simple functions available to everyone.
 SetIdle.setIdle = setIdle;
 SetIdle.clearIdle = clearIdle;
+
+if (typeof _detectedModuleType !== 'undefined' && _detectedModuleType === 'Browser') {
+    window.setIdle = setIdle;
+    window.clearIdle = clearIdle;
+}

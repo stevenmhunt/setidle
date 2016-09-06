@@ -1,6 +1,6 @@
 {
   "name": "setidle",
-  "version": "0.3.1",
+  "version": "0.4",
   "description": "Callback for when the system is idle.",
   "main": "setidle.js",
   "scripts": {
@@ -23,10 +23,13 @@
   },
   "homepage": "https://github.com/stevenmhunt/setidle#readme",
   "devDependencies": {
+    "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
+    "gulp-detect": "^0.1.1",
     "gulp-header": "^1.8.8",
     "gulp-jshint": "^2.0.1",
+    "gulp-mocha": "^3.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-streamify": "^1.0.2",
     "gulp-uglify": "^2.0.0",

@@ -1,11 +1,25 @@
 /*****************************
  setidle
- v0.3.1
+ v0.3.2
  MIT license
  *****************************/
 
-(function (window) {
 
+(function () {
+    var _detectedModuleType;
+    if (typeof define === 'function' && define.amd) {
+        _detectedModuleType = 'RequireJS';
+    }
+    else if (typeof module === 'object' && module.exports) {
+        _detectedModuleType = 'CommonJS';
+    }
+    else if (typeof window !== 'undefined') {
+        _detectedModuleType = 'Browser';
+    }
+    else {
+        throw 'Error: No browser or module system detected!';
+    }
+    var SetIdle = {};
 
 /**
  * The default idle configuration.
@@ -191,14 +205,14 @@ DOMEventEmitter.prototype.off =  function (event, fn) {
  * @param emitter An event emitter. Expects a NodeJS-style EventEmitter instance. For DOM events, use SetIdle.DOMEventEmitter.
  * @constructor
  */
-function SetIdle(emitter) {
+var SetIdle = function SetIdle(emitter) {
 
     /**
      * Retrieves the emitter being monitored.
      * @returns The emitter being monitored.
      */
     this.getEmitter = function () {  return emitter; };
-}
+};
 
 SetIdle.DOMEventEmitter = DOMEventEmitter;
 
@@ -320,30 +334,19 @@ function clearIdle(idle) {
 SetIdle.setIdle = setIdle;
 SetIdle.clearIdle = clearIdle;
 
-
-// check for RequireJS
-if(typeof define === "function" && define.amd) {
-    define(["setidle"], SetIdle);
-}
-
-// check for CommonJS
-else if(typeof module === "object" && module.exports) {
-    module.exports = SetIdle;
-}
-
-// check for browser.
-else if (window) {
-
-    // set up simple functions.
+if (typeof _detectedModuleType !== 'undefined' && _detectedModuleType === 'Browser') {
     window.setIdle = setIdle;
     window.clearIdle = clearIdle;
-
-    window.SetIdle = SetIdle;
 }
-
-else {
-    throw 'Error: No browser or module system detected!';
-}
-
-
-})(typeof window !== 'undefined' ? window : undefined);
+    switch (_detectedModuleType) {
+        case 'RequireJS':
+            define(['SetIdle'], SetIdle);
+            break;
+        case 'CommonJS':
+            module.exports = SetIdle;
+            break;
+        case 'Browser':
+            window.SetIdle = SetIdle;
+            break;
+   }
+})();

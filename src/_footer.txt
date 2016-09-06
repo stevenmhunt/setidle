@@ -1,3 +1,0 @@
-
-
-})(typeof window !== 'undefined' ? window : undefined);

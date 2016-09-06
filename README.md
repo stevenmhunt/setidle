@@ -82,8 +82,7 @@ only running code when you absolutely have the resources to do so, especially on
 
             // watch for indications that the browser is having to re-paint the page.
             'resize',
-            'DOMNodeInserted',
-            'DOMNodeRemoved'
+            'mutated' // this is a virtual event, we're using MutationObserver under the hood.
         ]
     }
 ```
